@@ -1,0 +1,41 @@
+## Ignorer les fichiers Visual Studio ##
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Ignorer les fichiers de compilation ##
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]uild/
+bld/
+
+## Ignorer les packages NuGet ##
+packages/
+*.nupkg
+.nuget/
+NuGet.exe
+
+## Ignorer les fichiers temporaires ##
+[Tt]emp/
+[Tt]mp/
+
+## Ignorer les logs ##
+*.log
+logs/
+
+## Ignorer les bases de données ##
+*.mdf
+*.ldf
+
+## Ignorer les paramètres utilisateur ##
+*.userprefs
+
+## Ignorer les fichiers de publication ##
+publish/
+app.publish/

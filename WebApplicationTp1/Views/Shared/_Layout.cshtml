@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gestion des Employés</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --pastel-blue: #a8d0e6;
+            --pastel-blue-dark: #87bdd8;
+            --pastel-blue-light: #c9e4f7;
+            --nav-height: 90px;
+        }
+
+        .navbar-pastel {
+            background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-blue-dark)) !important;
+            height: var(--nav-height);
+            box-shadow: 0 4px 20px rgba(168, 208, 230, 0.3);
+            border-bottom: 3px solid var(--pastel-blue-light);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 2rem !important;
+            color: #2c3e50 !important;
+            transition: all 0.3s ease;
+        }
+
+            .navbar-brand:hover {
+                transform: scale(1.05);
+                color: #34495e !important;
+            }
+
+        .nav-link {
+            font-size: 1.2rem !important;
+            font-weight: 600;
+            color: #2c3e50 !important;
+            padding: 15px 20px !important;
+            margin: 0 5px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+            .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.3) !important;
+                color: #1a252f !important;
+                transform: translateY(-2px);
+            }
+
+            .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.4) !important;
+                color: #1a252f !important;
+                font-weight: 700;
+            }
+
+        .navbar-toggler {
+            border: 2px solid #2c3e50;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .navbar-toggler-icon {
+            width: 1.8em;
+            height: 1.8em;
+        }
+
+        .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        }
+
+        .dropdown-item {
+            font-size: 1.1rem;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+            .dropdown-item:hover {
+                background: linear-gradient(135deg, var(--pastel-blue-light), var(--pastel-blue));
+                transform: translateX(5px);
+            }
+
+        .btn-outline-light {
+            border: 2px solid #2c3e50;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 12px 25px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-outline-light:hover {
+                background-color: #2c3e50;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        /* Ajustement du contenu principal pour la navbar plus grande */
+        main {
+            margin-top: calc(var(--nav-height) + 20px);
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            :root {
+                --nav-height: 80px;
+            }
+
+            .navbar-brand {
+                font-size: 1.6rem !important;
+            }
+
+            .nav-link {
+                font-size: 1.1rem !important;
+                padding: 12px 15px !important;
+            }
+
+            .navbar-collapse {
+                background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-blue-dark));
+                border-radius: 15px;
+                margin-top: 10px;
+                padding: 15px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            }
+        }
+
+        /* Animation d'entrée */
+        .navbar {
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @@keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark gradient-bg shadow">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-users me-2"></i>Gestion Employés
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home me-1"></i>Accueil
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" asp-area="" asp-controller="Employee" asp-action="Index">
+                                <i class="fas fa-list me-1"></i>Liste Employés
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Employee" asp-action="Create">
+                                <i class="fas fa-plus me-1"></i>Nouvel Employé
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>Mon Compte
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container-fluid py-4">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-dark text-white mt-5">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-users me-2"></i>Gestion des Employés</h5>
+                    <p class="mb-0">Application de gestion des ressources humaines</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2024 - Gestion Employés</p>
+                    <p class="mb-0">Développé avec ASP.NET Core MVC</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Animation pour les cartes statistiques
+        document.addEventListener('DOMContentLoaded', function() {
+            const statsCards = document.querySelectorAll('.stats-card');
+            statsCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // Confirmation pour la suppression
+        function confirmDelete(name) {
+            return confirm(`Êtes-vous sûr de vouloir supprimer l'employé "${name}" ?`);
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

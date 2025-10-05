@@ -1,0 +1,475 @@
+﻿@model IEnumerable<WebApplicationTp1.Models.Employee>
+
+@{
+    ViewData["Title"] = "Gestion des Employés";
+    var allDepartments = ViewData["AllDepartments"] as List<string>;
+    var selectedDepartment = ViewData["SelectedDepartment"] as string;
+}
+
+<div class="container-fluid px-4">
+    <!-- Header avec bouton d'action -->
+    <div class="d-flex justify-content-between align-items-center mb-6">
+        <div>
+            <h1 class="h2 fw-bold text-dark mb-1">Gestion des Employés</h1>
+            <p class="text-muted mb-0">Gérez votre équipe efficacement</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2">
+            <i class="fas fa-plus-circle"></i>
+            <span>Nouvel Employé</span>
+        </a>
+    </div>
+
+    <!-- Cartes Statistiques Modernes -->
+    <div class="row g-4 mb-6">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card border-0 bg-gradient-primary text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-users fa-2x opacity-75"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h4 class="mb-0 fw-bold">@ViewData["EmployeesCount"]</h4>
+                            <p class="mb-0 opacity-75">Total Employés</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card border-0 bg-gradient-success text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h4 class="mb-0 fw-bold">@ViewData["SalaryAverage"] DT</h4>
+                            <p class="mb-0 opacity-75">Salaire Moyen</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card border-0 bg-gradient-warning text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-trophy fa-2x opacity-75"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h4 class="mb-0 fw-bold">@ViewData["MaxSalary"] DT</h4>
+                            <p class="mb-0 opacity-75">Salaire Maximum</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card border-0 bg-gradient-info text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-user-tie fa-2x opacity-75"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h4 class="mb-0 fw-bold">@ViewData["HREmployeesCount"]</h4>
+                            <p class="mb-0 opacity-75">Employés RH</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre d'Outils Unifiée -->
+    <div class="card border-0 shadow-sm mb-6">
+        <div class="card-body p-4">
+            <div class="row g-3 align-items-center">
+                <!-- Recherche -->
+                <div class="col-lg-4">
+                    <form asp-action="Search" method="get" class="search-form">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-transparent border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="search" name="term" class="form-control border-start-0 ps-0"
+                                   placeholder="Rechercher un employé..."
+                                   value="@Context.Request.Query["term"]">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Filtres -->
+                <div class="col-lg-6">
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        <!-- Filtre Département -->
+                        <div class="filter-group">
+                            <label class="form-label small fw-semibold text-muted mb-1">Département</label>
+                            <form asp-action="Filter" method="post" class="department-filter">
+                                <select name="department" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="Tous">Tous les départements</option>
+                                    @if (allDepartments != null)
+                                    {
+                                        foreach (var dept in allDepartments)
+                                        {
+                                            <option value="@dept" selected="@(dept == selectedDepartment)">@dept</option>
+                                        }
+                                    }
+                                </select>
+                            </form>
+                        </div>
+
+                        <!-- Filtre Salaire -->
+                        <div class="filter-group">
+                            <label class="form-label small fw-semibold text-muted mb-1">Salaire</label>
+                            <form asp-action="Filter" method="post" class="salary-filter">
+                                <select name="salaryRange" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">Tous les salaires</option>
+                                    <option value="0-1000">Moins de 1000 DT</option>
+                                    <option value="1000-2000">1000 - 2000 DT</option>
+                                    <option value="2000-5000">Plus de 2000 DT</option>
+                                </select>
+                            </form>
+                        </div>
+
+                        <!-- Bouton Filtres Avancés -->
+                        <div class="filter-group">
+                            <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                                <i class="fas fa-sliders-h"></i>
+                                <span>Avancé</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Globales -->
+                <div class="col-lg-2 text-lg-end">
+                    <div class="d-flex gap-2 justify-content-lg-end">
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
+                            <i class="fas fa-refresh"></i>
+                        </a>
+                        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtres Avancés -->
+            <div class="collapse mt-4" id="advancedFilters">
+                <div class="border-top pt-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Salaire Min</label>
+                            <input type="number" class="form-control form-control-sm" placeholder="0 DT" min="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Salaire Max</label>
+                            <input type="number" class="form-control form-control-sm" placeholder="5000 DT" max="10000">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">Tri par</label>
+                            <select class="form-select form-select-sm">
+                                <option>Nom A-Z</option>
+                                <option>Nom Z-A</option>
+                                <option>Salaire Croissant</option>
+                                <option>Salaire Décroissant</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary btn-sm w-100">Appliquer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicateur de Filtre Actif -->
+    @if (!string.IsNullOrEmpty(selectedDepartment))
+    {
+        <div class="alert alert-light border d-flex align-items-center justify-content-between mb-4" role="alert">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-filter text-primary"></i>
+                <span class="fw-semibold">Filtre actif :</span>
+                <span class="badge bg-primary">@selectedDepartment</span>
+                <span class="text-muted">•</span>
+                <span class="text-muted">@Model.Count() employé(s) trouvé(s)</span>
+            </div>
+            <a asp-action="Index" class="btn-close" aria-label="Close"></a>
+        </div>
+    }
+
+    <!-- Tableau des Employés -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent border-0 py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-semibold">Liste des Employés</h5>
+                <span class="badge bg-light text-dark fs-6">@Model.Count()</span>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <div class="text-center py-8">
+                    <div class="empty-state">
+                        <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                        <h4 class="text-muted mb-2">Aucun employé trouvé</h4>
+                        <p class="text-muted mb-4">Aucun résultat ne correspond à vos critères de recherche.</p>
+                        <a asp-action="Index" class="btn btn-primary">
+                            <i class="fas fa-refresh me-2"></i>
+                            Réinitialiser les filtres
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4 py-3 fw-semibold text-muted text-uppercase small">Employé</th>
+                                <th class="py-3 fw-semibold text-muted text-uppercase small">Département</th>
+                                <th class="py-3 fw-semibold text-muted text-uppercase small">Salaire</th>
+                                <th class="pe-4 py-3 fw-semibold text-muted text-uppercase small text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="employee-row">
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="avatar bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center"
+                                                 style="width: 48px; height: 48px;">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">@item.Name</div>
+                                                <div class="text-muted small">ID: #@item.Id</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge department-badge
+                                                    @(item.Department == "informatique" ? "bg-info" :
+                                                                                            item.Department == "RH" ? "bg-success" :
+                                                                                            item.Department == "comptabilité" ? "bg-warning" : "bg-secondary")">
+                                    @item.Department
+                                </span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-success">@item.Salary DT</div>
+                                <div class="text-muted small">Mensuel</div>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-outline-primary btn-sm px-3"
+                                       data-bs-toggle="tooltip" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-outline-info btn-sm px-3"
+                                       data-bs-toggle="tooltip" title="Détails">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="btn btn-outline-danger btn-sm px-3"
+                                       data-bs-toggle="tooltip" title="Supprimer"
+                                       onclick="return confirmDelete('@item.Name')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                                                }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.Any())
+        {
+            <div class="card-footer bg-transparent border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        Affichage de <strong>@Model.Count()</strong> employé(s)
+                    </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Précédent</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Suivant</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .container-fluid {
+        max-width: 1400px;
+    }
+
+    .mb-6 {
+        margin-bottom: 3rem !important;
+    }
+
+    .py-8 {
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important;
+    }
+
+    /* Cartes Statistiques */
+    .stat-card {
+        border-radius: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%) !important;
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+    }
+
+    /* Barre de Recherche */
+    .search-form .form-control {
+        border: none;
+        background: transparent;
+        font-size: 0.95rem;
+    }
+
+        .search-form .form-control:focus {
+            box-shadow: none;
+            background: transparent;
+        }
+
+    .search-form .input-group-text {
+        background: transparent;
+        border: none;
+    }
+
+    /* Filtres */
+    .filter-group {
+        min-width: 120px;
+    }
+
+        .filter-group .form-label {
+            font-size: 0.75rem;
+        }
+
+        .filter-group .form-select {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.875rem;
+        }
+
+    /* Table */
+    .employee-row:hover {
+        background-color: #f8fafc;
+    }
+
+    .avatar {
+        transition: transform 0.2s ease;
+    }
+
+    .employee-row:hover .avatar {
+        transform: scale(1.1);
+    }
+
+    .department-badge {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+    }
+
+    /* Boutons Actions */
+    .btn-group .btn {
+        border-radius: 8px;
+        margin: 0 2px;
+    }
+
+    /* État Vide */
+    .empty-state {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .d-flex.flex-wrap {
+            justify-content: center;
+        }
+
+        .filter-group {
+            min-width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .text-lg-end {
+            text-align: center !important;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Initialisation des tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Recherche en temps réel (optionnel)
+            const searchInput = document.querySelector('input[name="term"]');
+            if (searchInput) {
+                let searchTimeout;
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        this.form.submit();
+                    }, 500);
+                });
+            }
+        });
+
+        function confirmDelete(name) {
+            return confirm(`Êtes-vous sûr de vouloir supprimer l'employé "${name}" ?`);
+        }
+    </script>
+}

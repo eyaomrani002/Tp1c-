@@ -1,0 +1,98 @@
+﻿@model WebApplicationTp1.Models.Employee
+
+@{
+    ViewData["Title"] = "Nouvel Employé";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 card-hover">
+                <div class="card-header gradient-bg text-white py-3">
+                    <h3 class="card-title mb-0 text-center">
+                        <i class="fas fa-user-plus me-2"></i>Ajouter un Nouvel Employé
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" class="needs-validation" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Name" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-2 text-primary"></i>Nom Complet
+                                </label>
+                                <input asp-for="Name" class="form-control form-control-lg"
+                                       placeholder="Entrez le nom complet" required />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                                <div class="invalid-feedback">
+                                    Veuillez saisir le nom de l'employé.
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Department" class="form-label fw-semibold">
+                                    <i class="fas fa-building me-2 text-primary"></i>Département
+                                </label>
+                                <select asp-for="Department" class="form-select form-select-lg" required>
+                                    <option value="">Choisir un département</option>
+                                    <option value="informatique">Informatique</option>
+                                    <option value="RH">Ressources Humaines</option>
+                                    <option value="comptabilité">Comptabilité</option>
+                                    <option value="marketing">Marketing</option>
+                                    <option value="production">Production</option>
+                                </select>
+                                <span asp-validation-for="Department" class="text-danger small"></span>
+                                <div class="invalid-feedback">
+                                    Veuillez sélectionner un département.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Salary" class="form-label fw-semibold">
+                                <i class="fas fa-money-bill-wave me-2 text-primary"></i>Salaire (DT)
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">DT</span>
+                                <input asp-for="Salary" class="form-control form-control-lg"
+                                       type="number" placeholder="2000" min="200" max="5000" required />
+                            </div>
+                            <span asp-validation-for="Salary" class="text-danger small"></span>
+                            <div class="invalid-feedback">
+                                Le salaire doit être entre 200 et 5000 DT.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg me-md-2">
+                                <i class="fas fa-arrow-left me-2"></i>Retour
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-save me-2"></i>Créer l'Employé
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Validation côté client
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+}
